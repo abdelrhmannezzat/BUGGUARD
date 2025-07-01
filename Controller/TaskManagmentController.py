@@ -2,11 +2,9 @@ from datetime import datetime
 from typing import Optional, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlmodel import Session, select
 from starlette import status
 
 from Service.TaskService import TaskService
-from db.session import get_session
 from model.Task import Task
 from model.TaskCreate import TaskCreate
 from model.TaskPriority import TaskPriority
