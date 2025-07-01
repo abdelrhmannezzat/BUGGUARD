@@ -1,4 +1,6 @@
-from typing import List
+from typing import List, Optional
+
+from fastapi import Query
 
 from model.Task import Task
 from model.TaskCreate import TaskCreate
@@ -16,8 +18,17 @@ class TaskRepo:
         self.session.refresh(task)
         return task
 
-    def get_all_tasks(self) -> List[Task]:
-        return self.session.exec(select(Task)).all()
+    def get_all_tasks(self, status: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    limit: int = Query(default=10, ge=1),
+    offset: int = Query(default=0, ge=0),) -> List[Task]:
+        query = select(Task)
+        if status:
+            query = query.where(Task.status == status)
+        if assigned_to:
+            query = query.where(Task.assigned_to == assigned_to)
+        tasks = self.session.exec(query.offset(offset).limit(limit)).all()
+        return tasks
 
     def get_task_by_id(self, task_id: int) -> Task:
         return self.session.exec(select(Task).where(Task.id == task_id)).first()

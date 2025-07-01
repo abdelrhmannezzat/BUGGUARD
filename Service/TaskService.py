@@ -1,4 +1,6 @@
-from fastapi import Depends
+from typing import Optional
+
+from fastapi import Depends, Query
 from sqlmodel import Session
 
 from Repos.TaskRepo import TaskRepo
@@ -13,8 +15,11 @@ class TaskService:
     def create_task(self, task: TaskCreate):
         return self.repo.create_task(task)
 
-    def get_all_tasks(self):
-        return self.repo.get_all_tasks()
+    def get_all_tasks(self,status: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    limit: int = Query(default=10, ge=1),
+    offset: int = Query(default=0, ge=0),):
+        return self.repo.get_all_tasks(status,assigned_to,limit,offset)
 
     def get_task_by_id(self, task_id):
         return self.repo.get_task_by_id(task_id)
